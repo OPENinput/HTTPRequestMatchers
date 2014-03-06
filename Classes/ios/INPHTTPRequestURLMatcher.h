@@ -10,6 +10,11 @@
 #import "INPHTTPRequestMatcher.h"
 
 
+@interface NSURL (INPHTTPRequestMatchers)
+- (BOOL)matchesPath:(NSString *)path;
+@end
+
+
 @interface INPHTTPRequestURLMatcher : INPHTTPRequestMatcher
 - (void)matchPath:(NSString *)path;
 @end

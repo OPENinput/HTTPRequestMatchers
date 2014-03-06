@@ -9,6 +9,32 @@
 #import "INPHTTPRequestURLMatcher.h"
 
 
+@implementation NSURL (INPHTTPRequestMatchers)
+
+- (BOOL)matchesPath:(NSString *)path {
+    NSArray *urlComponents = self.pathComponents;
+    NSArray *pathComponents = [[path componentsSeparatedByString:@"/"] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        return [evaluatedObject length] > 0;
+    }]];
+    
+    if ([urlComponents count] >= [pathComponents count]) {
+        NSArray *componentsToCheck = [urlComponents subarrayWithRange:NSMakeRange([urlComponents count] - [pathComponents count], [pathComponents count])];
+        __block BOOL match = YES;
+        [pathComponents enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            if (![obj hasPrefix:@":"] && ![obj isEqual:[componentsToCheck objectAtIndex:idx]]) {
+                match = NO;
+                *stop = YES;
+            }
+        }];
+        return match;
+    } else {
+        return NO;
+    }
+}
+
+@end
+
+
 @interface INPHTTPRequestURLMatcher ()
 @property (nonatomic, strong) NSString *path;
 @end
@@ -25,24 +51,7 @@
 #pragma mark Matching
 
 - (BOOL)evaluateRequest:(NSURLRequest *)request {
-    NSArray *urlComponents = request.URL.pathComponents;
-    NSArray *pathComponents = [[self.path componentsSeparatedByString:@"/"] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-        return [evaluatedObject length] > 0;
-    }]];
-
-    if ([urlComponents count] >= [pathComponents count]) {
-        NSArray *componentsToCheck = [urlComponents subarrayWithRange:NSMakeRange([urlComponents count] - [pathComponents count], [pathComponents count])];
-        __block BOOL match = YES;
-        [pathComponents enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            if (![obj hasPrefix:@":"] && ![obj isEqual:[componentsToCheck objectAtIndex:idx]]) {
-                match = NO;
-                *stop = YES;
-            }
-        }];
-        return match;
-    } else {
-        return NO;
-    }
+    return [request.URL matchesPath:self.path];
 }
 
 #pragma mark Failure messages
