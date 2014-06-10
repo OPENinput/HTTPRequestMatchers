@@ -11,5 +11,6 @@
 #import "INPHTTPRequestHeadersMatcher.h"
 #import "INPHTTPRequestEmptyBodyMatcher.h"
 #import "INPHTTPRequestJSONBodyMatcher.h"
+#import "INPHTTPRequestQueryParameterMatcher.h"
 #import "INPHTTPJSONFixture.h"
 
