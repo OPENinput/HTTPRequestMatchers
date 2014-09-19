@@ -27,5 +27,5 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/ios/*.{h,m}'
 
   s.frameworks = 'SenTestingKit'
-  s.dependency 'Kiwi/XCTest', '>= 2.0.0'
+  s.dependency 'Kiwi', '>= 2.3.0'
 end
